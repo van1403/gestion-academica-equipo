@@ -1,0 +1,26 @@
+name: Reporte de error
+description: Informa un comportamiento inesperado del prototipo.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: ¿Qué ocurrió y qué esperabas que ocurriera?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Pasos para reproducir
+      placeholder: "1. Abre ... 2. Selecciona ..."
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidencia
+      description: Agrega mensajes de error o capturas sin datos personales.
+    validations:
+      required: false

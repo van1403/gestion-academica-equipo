@@ -1,0 +1,19 @@
+name: Solicitud de mejora
+description: Propón una mejora para la gestión académica.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Necesidad
+      description: ¿Qué problema o necesidad se busca resolver?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: Describe el resultado que te gustaría obtener.
+    validations:
+      required: true
