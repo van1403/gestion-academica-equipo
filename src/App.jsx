@@ -39,14 +39,16 @@ function Brand() {
 
 function Login({ setupRequired, onSuccess }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [registering, setRegistering] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const isRegistration = setupRequired && registering;
   async function submit(event) {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
-      await request(setupRequired ? "/auth/setup" : "/auth/login", { method: "POST", body: form });
+      await request(isRegistration ? "/auth/setup" : "/auth/login", { method: "POST", body: form });
       onSuccess();
     } catch (err) {
       setError(err.message);
@@ -59,23 +61,24 @@ function Login({ setupRequired, onSuccess }) {
       <section className="auth-card">
         <div className="auth-topbar">
           <Brand />
-          <span className="status-chip">{setupRequired ? "Configuración" : "En línea"}</span>
+          <span className="status-chip">{isRegistration ? "Configuración" : "En línea"}</span>
         </div>
         <p className="eyebrow">GESTIÓN ACADÉMICA</p>
-        <h1>{setupRequired ? "Comienza con tu institución" : "Qué gusto verte de nuevo"}</h1>
-        <p className="auth-subtitle">{setupRequired ? "Crea la cuenta de administrador para configurar tu espacio." : "Ingresa a tu espacio de gestión académica."}</p>
+        <h1>{isRegistration ? "Comienza con tu institución" : "Qué gusto verte de nuevo"}</h1>
+        <p className="auth-subtitle">{isRegistration ? "Crea la cuenta de administrador para configurar tu espacio." : "Ingresa a tu espacio de gestión académica."}</p>
         <form onSubmit={submit} className="form-stack">
-          {setupRequired && <label>Nombre completo<input autoComplete="name" required maxLength="120" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Martínez" /></label>}
+          {isRegistration && <label>Nombre completo<input autoComplete="name" required maxLength="120" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Martínez" /></label>}
           <label>Correo electrónico<input type="email" autoComplete="username" required maxLength="254" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="nombre@institucion.edu" /></label>
-          <label>Contraseña<input type="password" autoComplete={setupRequired ? "new-password" : "current-password"} required minLength={setupRequired ? 12 : 1} maxLength="128" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder={setupRequired ? "Al menos 12 caracteres" : "Tu contraseña"} /></label>
-          <div className="login-meta">
+          <label>Contraseña<input type="password" autoComplete={isRegistration ? "new-password" : "current-password"} required minLength={isRegistration ? 12 : 1} maxLength="128" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder={isRegistration ? "Al menos 12 caracteres" : "Tu contraseña"} /></label>
+          {!isRegistration && <div className="login-meta">
             <label className="checkbox-row"><input type="checkbox" readOnly checked /> Mantener sesión activa</label>
             <a href="#" className="text-link">¿Olvidaste tu contraseña?</a>
-          </div>
+          </div>}
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button className="button primary full" disabled={busy}>{busy ? "Procesando…" : setupRequired ? "Crear cuenta segura" : "Iniciar sesión"}</button>
+          <button className="button primary full" disabled={busy}>{busy ? "Procesando…" : isRegistration ? "Crear cuenta segura" : "Iniciar sesión"}</button>
         </form>
-        {setupRequired && <p className="security-note">Tu contraseña se protege con hash criptográfico y nunca se almacena en texto plano.</p>}
+        {isRegistration && <p className="security-note">Tu contraseña se protege con hash criptográfico y nunca se almacena en texto plano.</p>}
+        {setupRequired && <p className="auth-switch">{isRegistration ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"} <button type="button" onClick={() => { setRegistering(!registering); setError(""); }}>{isRegistration ? "Inicia sesión" : "Regístrate"}</button></p>}
       </section>
       <aside className="auth-aside">
         <div className="aside-orb orb-one" />
