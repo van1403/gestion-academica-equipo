@@ -107,6 +107,10 @@ td{font-size:11px}
 .checkbox-row input{width:14px;height:14px;accent-color:#5164dc;margin:0}
 .text-link{color:#4f46e5;text-decoration:none;font-weight:600}
 .text-link:hover{text-decoration:underline}
+.auth-switch{margin:18px 0 0;text-align:center;color:#64748b;font-size:12px}
+.auth-switch button{appearance:none;border:0;background:transparent;padding:0 0 0 3px;color:#4f46e5;font:inherit;font-weight:700;cursor:pointer}
+.auth-switch button:hover{text-decoration:underline;text-underline-offset:3px}
+.auth-switch button:focus-visible{outline:2px solid #4f46e5;outline-offset:3px;border-radius:2px}
 .auth-card .button{margin-top:8px;height:48px;border:none;border-radius:14px;padding:0 18px;font-size:14px;font-weight:700;letter-spacing:.01em;background:linear-gradient(135deg,#5265df,#7c5cff);box-shadow:0 16px 28px rgba(82,101,223,.22)}
 .auth-card .button:hover{background:linear-gradient(135deg,#4a5bc8,#7254f4)}
 .form-error{margin:0;padding:12px 14px;border-radius:12px;background:#fff0f1;border:1px solid #fbcfe0;color:#be123c;font-size:12px;font-weight:600}
