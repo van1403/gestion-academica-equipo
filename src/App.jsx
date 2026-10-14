@@ -38,17 +38,20 @@ function Brand() {
 }
 
 function Login({ setupRequired, onSuccess }) {
+  const [mode, setMode] = useState(setupRequired ? "create" : "login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [registering, setRegistering] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const isRegistration = setupRequired && registering;
+  
+  // Lógica unificada para saber si estamos en modo creación/registro
+  const isCreateMode = mode === "create" || setupRequired;
+
   async function submit(event) {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
-      await request(isRegistration ? "/auth/setup" : "/auth/login", { method: "POST", body: form });
+      await request(isCreateMode ? "/auth/setup" : "/auth/login", { method: "POST", body: form });
       onSuccess();
     } catch (err) {
       setError(err.message);
@@ -56,30 +59,42 @@ function Login({ setupRequired, onSuccess }) {
       setBusy(false);
     }
   }
+
   return (
     <main className="auth-layout">
       <section className="auth-card">
         <div className="auth-topbar">
           <Brand />
-          <span className="status-chip">{isRegistration ? "Configuración" : "En línea"}</span>
+          <span className="status-chip">{isCreateMode ? "Configuración" : "En línea"}</span>
         </div>
         <p className="eyebrow">GESTIÓN ACADÉMICA</p>
-        <h1>{isRegistration ? "Comienza con tu institución" : "Qué gusto verte de nuevo"}</h1>
-        <p className="auth-subtitle">{isRegistration ? "Crea la cuenta de administrador para configurar tu espacio." : "Ingresa a tu espacio de gestión académica."}</p>
+        
+        <div className="auth-toggle" role="tablist" aria-label="Elegir tipo de acceso">
+          <button type="button" className={isCreateMode ? "active" : ""} onClick={() => setMode("create")}>Crear cuenta</button>
+          <button type="button" className={!isCreateMode ? "active" : ""} onClick={() => setMode("login")}>Iniciar sesión</button>
+        </div>
+        
+        <h1>{isCreateMode ? "Comienza con tu institución" : "Qué gusto verte de nuevo"}</h1>
+        <p className="auth-subtitle">{isCreateMode ? "Crea la cuenta de administrador para configurar tu espacio." : "Ingresa a tu espacio de gestión académica."}</p>
+        
         <form onSubmit={submit} className="form-stack">
-          {isRegistration && <label>Nombre completo<input autoComplete="name" required maxLength="120" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Martínez" /></label>}
+          {isCreateMode && <label>Nombre completo<input autoComplete="name" required maxLength="120" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Martínez" /></label>}
           <label>Correo electrónico<input type="email" autoComplete="username" required maxLength="254" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="nombre@institucion.edu" /></label>
-          <label>Contraseña<input type="password" autoComplete={isRegistration ? "new-password" : "current-password"} required minLength={isRegistration ? 12 : 1} maxLength="128" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder={isRegistration ? "Al menos 12 caracteres" : "Tu contraseña"} /></label>
-          {!isRegistration && <div className="login-meta">
+          <label>Contraseña<input type="password" autoComplete={isCreateMode ? "new-password" : "current-password"} required minLength={isCreateMode ? 12 : 1} maxLength="128" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder={isCreateMode ? "Al menos 12 caracteres" : "Tu contraseña"} /></label>
+          
+          <div className="login-meta">
             <label className="checkbox-row"><input type="checkbox" readOnly checked /> Mantener sesión activa</label>
             <a href="#" className="text-link">¿Olvidaste tu contraseña?</a>
-          </div>}
+          </div>
+          
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button className="button primary full" disabled={busy}>{busy ? "Procesando…" : isRegistration ? "Crear cuenta segura" : "Iniciar sesión"}</button>
+          
+          <button className="button primary full" disabled={busy}>{busy ? "Procesando…" : isCreateMode ? "Crear cuenta segura" : "Iniciar sesión"}</button>
         </form>
-        {isRegistration && <p className="security-note">Tu contraseña se protege con hash criptográfico y nunca se almacena en texto plano.</p>}
-        {setupRequired && <p className="auth-switch">{isRegistration ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"} <button type="button" onClick={() => { setRegistering(!registering); setError(""); }}>{isRegistration ? "Inicia sesión" : "Regístrate"}</button></p>}
+        
+        {isCreateMode && <p className="security-note">Tu contraseña se protege con hash criptográfico y nunca se almacena en texto plano.</p>}
       </section>
+      
       <aside className="auth-aside">
         <div className="aside-orb orb-one" />
         <div className="aside-orb orb-two" />
